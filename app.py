@@ -1,4 +1,5 @@
-﻿"""Health Companion adaptive clinical assessment application."""
+﻿# Redeploy trigger: Pick up new environment variables
+"""Health Companion adaptive clinical assessment application."""
 
 from __future__ import annotations
 
