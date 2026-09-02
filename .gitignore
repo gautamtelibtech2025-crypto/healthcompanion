@@ -1,0 +1,6 @@
+.env
+dev_secrets.py
+outputs/*.log
+outputs/*.err.log
+__pycache__/
+.pytest_cache/
