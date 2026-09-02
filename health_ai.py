@@ -3,10 +3,10 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-import os
 import time
 
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 
 from config import DEFAULT_AI_MAX_OUTPUT_TOKENS, DEFAULT_AI_RESPONSE_STYLE, DEFAULT_AI_TEMPERATURE
 
@@ -60,16 +60,15 @@ class GeminiHealthClient:
     def validate_api_key(self) -> None:
         """Validate credentials by listing models for the current key."""
         try:
-            genai.configure(api_key=self.api_key)
-            list(genai.list_models())
+            list(genai.Client(api_key=self.api_key).models.list())
         except Exception as exc:
             raise HealthAiError(_friendly_error_message(exc, "Could not validate the Gemini API key.")) from exc
 
     def list_text_models(self) -> list[GeminiModelInfo]:
         """Return only Gemini models that support text generation."""
         try:
-            genai.configure(api_key=self.api_key)
-            models = list(genai.list_models())
+            client = genai.Client(api_key=self.api_key)
+            models = list(client.models.list())
         except Exception as exc:
             raise HealthAiError(_friendly_error_message(exc, "Could not load Gemini models.")) from exc
 
@@ -85,7 +84,7 @@ class GeminiHealthClient:
                         description=model.description or "",
                         output_token_limit=model.output_token_limit,
                         max_temperature=None,
-                        supported_actions=tuple(model.supported_generation_methods or []),
+                        supported_actions=tuple(model.supported_actions or []),
                     )
                 )
             except Exception:
@@ -144,18 +143,18 @@ class GeminiHealthClient:
         max_output_tokens_override: int | None = None,
     ) -> str:
         try:
-            genai.configure(api_key=self.api_key)
-            model = genai.GenerativeModel(
-                model_name=settings.model_name,
-                generation_config=genai.types.GenerationConfig(
+            client = genai.Client(api_key=self.api_key)
+            response = client.models.generate_content(
+                model=settings.model_name,
+                contents=prompt,
+                config=types.GenerateContentConfig(
                     temperature=settings.temperature if temperature_override is None else temperature_override,
                     top_p=0.9,
                     max_output_tokens=settings.max_output_tokens if max_output_tokens_override is None else max_output_tokens_override,
                     response_mime_type=response_mime_type,
+                    system_instruction=_system_instruction_for_style(settings.response_style),
                 ),
-                system_instruction=_system_instruction_for_style(settings.response_style),
             )
-            response = model.generate_content(prompt)
         except Exception as exc:
             raise HealthAiError(_friendly_error_message(exc, "Gemini request failed.")) from exc
 
@@ -164,7 +163,7 @@ class GeminiHealthClient:
 
 def _supports_text_generation_sdk(model) -> bool:
     """Check if model supports text generation."""
-    actions = [str(action).lower() for action in (model.supported_generation_methods or []) if str(action).strip()]
+    actions = [str(action).lower() for action in (model.supported_actions or []) if str(action).strip()]
     if actions and not any("generate" in action for action in actions):
         return False
 
