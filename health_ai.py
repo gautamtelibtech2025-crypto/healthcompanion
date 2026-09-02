@@ -3,19 +3,15 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-import json
 import os
-import shutil
-import subprocess
 import time
+
+import google.generativeai as genai
 
 from config import DEFAULT_AI_MAX_OUTPUT_TOKENS, DEFAULT_AI_RESPONSE_STYLE, DEFAULT_AI_TEMPERATURE
 
 
-GEMINI_CONNECT_TIMEOUT_SECONDS = 5
 GEMINI_REQUEST_TIMEOUT_SECONDS = 15
-GEMINI_PROCESS_TIMEOUT_SECONDS = 20
-GEMINI_API_BASE_URL = "https://generativelanguage.googleapis.com/v1beta"
 
 
 class HealthAiError(RuntimeError):
@@ -64,35 +60,36 @@ class GeminiHealthClient:
     def validate_api_key(self) -> None:
         """Validate credentials by listing models for the current key."""
         try:
-            self._request_json("GET", "models")
+            genai.configure(api_key=self.api_key)
+            list(genai.list_models())
         except Exception as exc:
             raise HealthAiError(_friendly_error_message(exc, "Could not validate the Gemini API key.")) from exc
 
     def list_text_models(self) -> list[GeminiModelInfo]:
         """Return only Gemini models that support text generation."""
         try:
-            models = self._request_json("GET", "models").get("models", [])
+            genai.configure(api_key=self.api_key)
+            models = list(genai.list_models())
         except Exception as exc:
             raise HealthAiError(_friendly_error_message(exc, "Could not load Gemini models.")) from exc
 
         filtered: list[GeminiModelInfo] = []
         for model in models:
-            if not isinstance(model, dict):
-                continue
-            if not _supports_text_generation(model):
-                continue
-            filtered.append(
-                GeminiModelInfo(
-                    name=str(model.get("name", "") or "").strip(),
-                    display_name=_pretty_model_name(str(model.get("displayName", "") or ""), str(model.get("name", "") or "")),
-                    description=str(model.get("description", "") or "").strip(),
-                    output_token_limit=_optional_int(model.get("outputTokenLimit")),
-                    max_temperature=_optional_float(model.get("maxTemperature")),
-                    supported_actions=tuple(
-                        str(action) for action in model.get("supportedGenerationMethods", []) if str(action).strip()
-                    ),
+            try:
+                if not _supports_text_generation_sdk(model):
+                    continue
+                filtered.append(
+                    GeminiModelInfo(
+                        name=model.name or "",
+                        display_name=_pretty_model_name(model.display_name or "", model.name or ""),
+                        description=model.description or "",
+                        output_token_limit=model.output_token_limit,
+                        max_temperature=None,
+                        supported_actions=tuple(model.supported_generation_methods or []),
+                    )
                 )
-            )
+            except Exception:
+                continue
 
         return _rank_models(filtered)
 
@@ -146,93 +143,33 @@ class GeminiHealthClient:
         temperature_override: float | None = None,
         max_output_tokens_override: int | None = None,
     ) -> str:
-        generation_config: dict[str, object] = {
-            "temperature": settings.temperature if temperature_override is None else temperature_override,
-            "topP": 0.9,
-            "maxOutputTokens": settings.max_output_tokens if max_output_tokens_override is None else max_output_tokens_override,
-        }
-        if response_mime_type is not None:
-            generation_config["responseMimeType"] = response_mime_type
-
         try:
-            response = self._request_json(
-                "POST",
-                f"{settings.model_name}:generateContent",
-                {
-                    "contents": [{"role": "user", "parts": [{"text": prompt}]}],
-                    "generationConfig": generation_config,
-                    "systemInstruction": {"parts": [{"text": _system_instruction_for_style(settings.response_style)}]},
-                },
+            genai.configure(api_key=self.api_key)
+            model = genai.GenerativeModel(
+                model_name=settings.model_name,
+                generation_config=genai.types.GenerationConfig(
+                    temperature=settings.temperature if temperature_override is None else temperature_override,
+                    top_p=0.9,
+                    max_output_tokens=settings.max_output_tokens if max_output_tokens_override is None else max_output_tokens_override,
+                    response_mime_type=response_mime_type,
+                ),
+                system_instruction=_system_instruction_for_style(settings.response_style),
             )
+            response = model.generate_content(prompt)
         except Exception as exc:
             raise HealthAiError(_friendly_error_message(exc, "Gemini request failed.")) from exc
 
-        return _extract_response_text(response)
-
-    def _request_json(self, method: str, resource: str, payload: dict[str, object] | None = None) -> dict[str, object]:
-        curl = shutil.which("curl")
-        if not curl:
-            raise RuntimeError("curl is required to contact Gemini on this machine.")
-
-        environment = os.environ.copy()
-        environment["HC_GEMINI_API_KEY"] = self.api_key
-        url = f"{GEMINI_API_BASE_URL}/{resource.lstrip('/')}?key={{{{HC_GEMINI_API_KEY}}}}"
-        command = [
-            curl,
-            "--variable",
-            "%HC_GEMINI_API_KEY",
-            "--expand-url",
-            url,
-            "--request",
-            method,
-            "--http1.1",
-            "--connect-timeout",
-            str(GEMINI_CONNECT_TIMEOUT_SECONDS),
-            "--max-time",
-            str(GEMINI_REQUEST_TIMEOUT_SECONDS),
-            "--silent",
-            "--show-error",
-            "--fail-with-body",
-        ]
-        request_body = None
-        if payload is not None:
-            command.extend(["--header", "Content-Type: application/json", "--data-binary", "@-"])
-            request_body = json.dumps(payload, ensure_ascii=False)
-
-        try:
-            completed = subprocess.run(
-                command,
-                input=request_body,
-                capture_output=True,
-                text=True,
-                encoding="utf-8",
-                errors="replace",
-                env=environment,
-                timeout=GEMINI_PROCESS_TIMEOUT_SECONDS,
-                check=False,
-            )
-        except subprocess.TimeoutExpired as exc:
-            raise RuntimeError("Gemini request timed out.") from exc
-
-        if completed.returncode != 0:
-            details = (completed.stdout or completed.stderr).strip()
-            raise RuntimeError(details or "Gemini request failed.")
-        try:
-            response = json.loads(completed.stdout)
-        except json.JSONDecodeError as exc:
-            raise RuntimeError("Gemini returned an invalid response.") from exc
-        if not isinstance(response, dict):
-            raise RuntimeError("Gemini returned an invalid response.")
-        return response
+        return (response.text or "").strip()
 
 
-def _supports_text_generation(model: dict[str, object]) -> bool:
-    actions = [str(action).lower() for action in model.get("supportedGenerationMethods", []) if str(action).strip()]
+def _supports_text_generation_sdk(model) -> bool:
+    """Check if model supports text generation."""
+    actions = [str(action).lower() for action in (model.supported_generation_methods or []) if str(action).strip()]
     if actions and not any("generate" in action for action in actions):
         return False
 
     searchable = " ".join(
-        str(part) for part in (model.get("name", ""), model.get("displayName", ""), model.get("description", "")) if part
+        str(part) for part in (model.name or "", model.display_name or "", model.description or "")
     ).lower()
     blocked_tokens = ("embed", "image", "video", "audio", "speech", "embedding")
     return not any(token in searchable for token in blocked_tokens)
@@ -290,35 +227,3 @@ def _friendly_error_message(exc: Exception, fallback_message: str) -> str:
         return f"{fallback_message} {raw_message}"
     return fallback_message
 
-
-def _extract_response_text(response: dict[str, object]) -> str:
-    """Extract text from Gemini candidates when response.text is empty."""
-    candidates = response.get("candidates", [])
-    parts: list[str] = []
-    for candidate in candidates:
-        if not isinstance(candidate, dict):
-            continue
-        content = candidate.get("content", {})
-        if not isinstance(content, dict):
-            continue
-        for part in content.get("parts", []) or []:
-            if not isinstance(part, dict):
-                continue
-            text = str(part.get("text", "") or "").strip()
-            if text:
-                parts.append(text)
-    return "\n".join(parts).strip()
-
-
-def _optional_int(value: object) -> int | None:
-    try:
-        return int(value) if value is not None else None
-    except (TypeError, ValueError):
-        return None
-
-
-def _optional_float(value: object) -> float | None:
-    try:
-        return float(value) if value is not None else None
-    except (TypeError, ValueError):
-        return None
