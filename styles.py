@@ -44,7 +44,7 @@ def apply_global_styles() -> None:
             background: var(--hc-bg);
         }}
 
-        .q-drawer--mobile.q-drawer--left {{
+        .q-drawer--mobile {{
             transform: translateX(0) !important;
         }}
 
@@ -58,8 +58,8 @@ def apply_global_styles() -> None:
             flex-direction: column;
         }}
 
-        @media (max-width: 767px) {{
-            .q-drawer.q-drawer--mobile.q-drawer--left {{
+        @media (max-width: 1023px) {{
+            .q-drawer.q-drawer--mobile {{
                 position: fixed !important;
                 top: 0 !important;
                 left: 0 !important;
@@ -70,7 +70,7 @@ def apply_global_styles() -> None:
                 z-index: 3000 !important;
             }}
 
-            .q-drawer.q-drawer--mobile.q-drawer--left .q-drawer__content {{
+            .q-drawer.q-drawer--mobile .q-drawer__content {{
                 height: auto !important;
                 min-height: 0 !important;
                 overflow: visible !important;
