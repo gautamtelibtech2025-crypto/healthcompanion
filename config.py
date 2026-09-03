@@ -31,12 +31,12 @@ def get_gemini_api_key() -> str:
 class UiPalette:
     """Shared design tokens used by the NiceGUI interface."""
 
-    background: str = "#F7F3EA"
-    card: str = "#FFFCF7"
-    text: str = "#222222"
-    secondary_text: str = "#666666"
-    accent: str = "#17324D"
-    border: str = "#DDDDDD"
+    background: str = "#FFFFFF"
+    card: str = "#FFFFFF"
+    text: str = "#1F2937"
+    secondary_text: str = "#64748B"
+    accent: str = "#5B86AD"
+    border: str = "#E5E7EB"
     success: str = "#2E5E4E"
     warning: str = "#8A5A10"
     danger: str = "#8B2F2F"

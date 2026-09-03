@@ -40,19 +40,86 @@ def apply_global_styles() -> None:
 
         .hc-shell {{
             min-height: 100vh;
+            margin-left: 300px !important;
             background: var(--hc-bg);
         }}
 
         .hc-sidebar {{
-            background: #efe8dc;
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            z-index: 3000 !important;
+            box-sizing: border-box;
+            width: 300px !important;
+            height: 100vh !important;
+            overflow-y: auto !important;
+            background: #F8FAFC;
             border-right: 1px solid var(--hc-border);
+        }}
+
+        .hc-sidebar-nav {{
+            display: flex;
+            flex-direction: column;
+        }}
+
+        @media (max-width: 1023px) {{
+            .hc-sidebar {{
+                width: 100% !important;
+                height: auto !important;
+                max-height: none !important;
+                padding: 12px 16px !important;
+                border-right: none;
+                border-bottom: 1px solid var(--hc-border);
+                overflow: visible !important;
+            }}
+
+            .hc-sidebar-brand,
+            .hc-sidebar-helper,
+            .hc-sidebar-spacer,
+            .hc-sidebar-divider,
+            .hc-sidebar-footer {{
+                display: none !important;
+            }}
+
+            .hc-sidebar-nav {{
+                flex-direction: row;
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                width: 100%;
+                padding-bottom: 2px;
+            }}
+
+            .hc-sidebar-nav-item {{
+                flex: 1 1 0 !important;
+                width: 0 !important;
+                min-width: 0 !important;
+                margin-bottom: 0 !important;
+                padding: 8px 6px !important;
+                font-size: 12px !important;
+            }}
+
+            .hc-sidebar-nav-item .q-btn__content {{
+                white-space: normal !important;
+                text-align: center;
+                line-height: 1.2;
+            }}
+
+            .hc-sidebar .q-btn.hc-nav-item,
+            .hc-sidebar .q-btn.hc-nav-active {{
+                color: var(--hc-accent) !important;
+            }}
+
+            .hc-shell {{
+                margin-left: 0 !important;
+                margin-top: 72px !important;
+            }}
         }}
 
         .hc-card {{
             background: var(--hc-card);
             border: 1px solid var(--hc-border);
             border-radius: 8px;
-            box-shadow: 0 18px 45px rgba(23, 50, 77, 0.07);
+            box-shadow: 0 18px 45px rgba(15, 23, 42, 0.07);
         }}
 
         .hc-card-flat {{
@@ -93,56 +160,35 @@ def apply_global_styles() -> None:
             box-shadow: none !important;
         }}
 
-        .hc-nav-item {{
-            background: rgba(255, 255, 255, 0.35) !important;
-            color: var(--hc-text) !important;
-            border: 1px solid rgba(23, 50, 77, 0.08) !important;
+        .hc-sidebar .q-btn.hc-nav-item,
+        .hc-sidebar .q-btn.hc-nav-active {{
+            background: #FFFFFF !important;
+            background-color: #FFFFFF !important;
+            color: var(--hc-accent) !important;
             border-radius: 12px !important;
             text-transform: none !important;
+            box-shadow: none !important;
+        }}
+
+        .hc-sidebar .q-btn.hc-nav-item {{
+            border: 1px solid var(--hc-border) !important;
             font-weight: 500 !important;
         }}
 
-        .hc-nav-active {{
-            background: var(--hc-accent) !important;
-            color: #fff !important;
-            border: 1px solid transparent !important;
-            border-radius: 12px !important;
-            text-transform: none !important;
+        .hc-sidebar .q-btn.hc-nav-active {{
+            border: 1px solid var(--hc-accent) !important;
             font-weight: 600 !important;
         }}
 
-        .hc-panel-toggle {{
-            position: fixed !important;
-            top: 128px !important;
-            left: 264px !important;
-            z-index: 3000 !important;
-            width: 36px !important;
-            height: 36px !important;
-            color: #d8d8d8 !important;
-            background: #1f2321 !important;
-            border: 1px solid rgba(255, 255, 255, 0.08) !important;
-            border-radius: 8px !important;
-            box-shadow: 0 12px 28px rgba(23, 50, 77, 0.18) !important;
-            transition: left 180ms ease, transform 180ms ease, background 180ms ease !important;
-        }}
-
-        .hc-panel-toggle-open {{
-            left: 264px !important;
-        }}
-
-        .hc-panel-toggle-closed {{
-            left: 18px !important;
-        }}
-
-        .hc-panel-toggle:hover {{
-            transform: translateX(2px);
-            background: #282d2a !important;
+        .hc-sidebar .q-btn.hc-nav-item .q-icon,
+        .hc-sidebar .q-btn.hc-nav-active .q-icon {{
+            color: var(--hc-accent) !important;
         }}
 
         .hc-sidebar-menu-button {{
             color: var(--hc-accent) !important;
             background: rgba(255, 255, 255, 0.55) !important;
-            border: 1px solid rgba(23, 50, 77, 0.08) !important;
+            border: 1px solid var(--hc-border) !important;
         }}
 
         .hc-sidebar-menu {{
@@ -153,7 +199,7 @@ def apply_global_styles() -> None:
         }}
 
         .hc-setting-card {{
-            background: linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(255, 252, 247, 0.96));
+            background: #FFFFFF;
         }}
 
         .hc-status-chip {{
