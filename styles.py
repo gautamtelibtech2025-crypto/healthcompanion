@@ -40,7 +40,12 @@ def apply_global_styles() -> None:
 
         .hc-shell {{
             min-height: 100vh;
+            margin-left: 300px !important;
             background: var(--hc-bg);
+        }}
+
+        .q-drawer--mobile.q-drawer--left {{
+            transform: translateX(0) !important;
         }}
 
         .hc-sidebar {{
