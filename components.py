@@ -61,7 +61,7 @@ def sidebar(current_step: str) -> None:
                     step,
                     on_click=lambda target=route: ui.navigate.to(target),
                     icon="radio_button_checked" if active else "radio_button_unchecked",
-                ).classes(
+                ).props("flat").classes(
                     "hc-sidebar-nav-item w-full justify-start text-left px-4 py-3 mb-2 rounded-xl border-none shadow-none "
                     + ("hc-nav-active" if active else "hc-nav-item")
                 ):

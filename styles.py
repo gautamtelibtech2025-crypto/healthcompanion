@@ -162,7 +162,8 @@ def apply_global_styles() -> None:
 
         .hc-sidebar .q-btn.hc-nav-item,
         .hc-sidebar .q-btn.hc-nav-active {{
-            background: var(--hc-card) !important;
+            background: #FFFFFF !important;
+            background-color: #FFFFFF !important;
             color: var(--hc-accent) !important;
             border-radius: 12px !important;
             text-transform: none !important;
