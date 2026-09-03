@@ -111,34 +111,6 @@ def apply_global_styles() -> None:
             font-weight: 600 !important;
         }}
 
-        .hc-panel-toggle {{
-            position: fixed !important;
-            top: 96px !important;
-            left: 264px !important;
-            z-index: 3000 !important;
-            width: 36px !important;
-            height: 36px !important;
-            color: #fff !important;
-            background: var(--hc-accent) !important;
-            border: 1px solid var(--hc-accent) !important;
-            border-radius: 8px !important;
-            box-shadow: 0 12px 28px rgba(23, 50, 77, 0.18) !important;
-            transition: left 180ms ease, transform 180ms ease, background 180ms ease !important;
-        }}
-
-        .hc-panel-toggle-open {{
-            left: 264px !important;
-        }}
-
-        .hc-panel-toggle-closed {{
-            left: 18px !important;
-        }}
-
-        .hc-panel-toggle:hover {{
-            transform: translateX(2px);
-            background: #244a70 !important;
-        }}
-
         .hc-sidebar-menu-button {{
             color: var(--hc-accent) !important;
             background: rgba(255, 255, 255, 0.55) !important;

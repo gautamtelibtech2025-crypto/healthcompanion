@@ -46,16 +46,6 @@ def sidebar(current_step: str) -> None:
         ("Clinical Report", "/report"),
     ]
     drawer = ui.left_drawer(value=True).classes("hc-sidebar w-72 p-6")
-    toggle_button = ui.button(icon="width_normal").props("flat round dense").classes("hc-panel-toggle")
-
-    def toggle_drawer() -> None:
-        drawer.toggle()
-        is_open = bool(drawer.value)
-        toggle_button.classes(remove="hc-panel-toggle-closed" if is_open else "hc-panel-toggle-open")
-        toggle_button.classes(add="hc-panel-toggle-open" if is_open else "hc-panel-toggle-closed")
-
-    toggle_button.on("click", toggle_drawer)
-    toggle_button.tooltip("Toggle sidebar")
 
     with drawer:
         with ui.column().classes("gap-1 pr-10"):
