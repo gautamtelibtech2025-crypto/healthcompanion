@@ -44,11 +44,15 @@ def apply_global_styles() -> None:
             background: var(--hc-bg);
         }}
 
-        .q-drawer--mobile {{
-            transform: translateX(0) !important;
-        }}
-
         .hc-sidebar {{
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            z-index: 3000 !important;
+            box-sizing: border-box;
+            width: 300px !important;
+            height: 100vh !important;
+            overflow-y: auto !important;
             background: #efe8dc;
             border-right: 1px solid var(--hc-border);
         }}
@@ -59,25 +63,10 @@ def apply_global_styles() -> None:
         }}
 
         @media (max-width: 1023px) {{
-            .q-drawer.q-drawer--mobile {{
-                position: fixed !important;
-                top: 0 !important;
-                left: 0 !important;
+            .hc-sidebar {{
                 width: 100% !important;
                 height: auto !important;
                 max-height: none !important;
-                transform: translateX(0) !important;
-                z-index: 3000 !important;
-            }}
-
-            .q-drawer.q-drawer--mobile .q-drawer__content {{
-                height: auto !important;
-                min-height: 0 !important;
-                overflow: visible !important;
-            }}
-
-            .hc-sidebar {{
-                box-sizing: border-box;
                 padding: 12px 16px !important;
                 border-right: none;
                 border-bottom: 1px solid var(--hc-border);
@@ -169,9 +158,9 @@ def apply_global_styles() -> None:
         }}
 
         .hc-nav-active {{
-            background: var(--hc-accent) !important;
-            color: #fff !important;
-            border: 1px solid transparent !important;
+            background: var(--hc-card) !important;
+            color: var(--hc-accent) !important;
+            border: 1px solid var(--hc-accent) !important;
             border-radius: 12px !important;
             text-transform: none !important;
             font-weight: 600 !important;

@@ -45,9 +45,9 @@ def sidebar(current_step: str) -> None:
         ("Adaptive Assessment", "/patient"),
         ("Clinical Report", "/report"),
     ]
-    drawer = ui.left_drawer(value=True).classes("hc-sidebar w-72 p-6")
+    sidebar_container = ui.element("aside").classes("hc-sidebar w-72 p-6")
 
-    with drawer:
+    with sidebar_container:
         with ui.column().classes("hc-sidebar-brand gap-1 pr-10"):
             ui.label(APP_NAME).classes("hc-serif text-3xl")
             ui.label(APP_TAGLINE).classes("text-sm hc-muted leading-6")
