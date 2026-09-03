@@ -90,11 +90,23 @@ def apply_global_styles() -> None:
             }}
 
             .hc-sidebar-nav-item {{
-                flex: 0 0 auto !important;
-                width: auto !important;
+                flex: 1 1 0 !important;
+                width: 0 !important;
+                min-width: 0 !important;
                 margin-bottom: 0 !important;
-                white-space: nowrap;
-                padding: 8px 12px !important;
+                padding: 8px 6px !important;
+                font-size: 12px !important;
+            }}
+
+            .hc-sidebar-nav-item .q-btn__content {{
+                white-space: normal !important;
+                text-align: center;
+                line-height: 1.2;
+            }}
+
+            .hc-sidebar .q-btn.hc-nav-item,
+            .hc-sidebar .q-btn.hc-nav-active {{
+                color: var(--hc-accent) !important;
             }}
 
             .hc-shell {{
@@ -148,22 +160,28 @@ def apply_global_styles() -> None:
             box-shadow: none !important;
         }}
 
-        .hc-nav-item {{
-            background: rgba(255, 255, 255, 0.35) !important;
-            color: var(--hc-text) !important;
-            border: 1px solid rgba(23, 50, 77, 0.08) !important;
+        .hc-sidebar .q-btn.hc-nav-item,
+        .hc-sidebar .q-btn.hc-nav-active {{
+            background: var(--hc-card) !important;
+            color: var(--hc-accent) !important;
             border-radius: 12px !important;
             text-transform: none !important;
+            box-shadow: none !important;
+        }}
+
+        .hc-sidebar .q-btn.hc-nav-item {{
+            border: 1px solid var(--hc-border) !important;
             font-weight: 500 !important;
         }}
 
-        .hc-nav-active {{
-            background: var(--hc-card) !important;
-            color: var(--hc-accent) !important;
+        .hc-sidebar .q-btn.hc-nav-active {{
             border: 1px solid var(--hc-accent) !important;
-            border-radius: 12px !important;
-            text-transform: none !important;
             font-weight: 600 !important;
+        }}
+
+        .hc-sidebar .q-btn.hc-nav-item .q-icon,
+        .hc-sidebar .q-btn.hc-nav-active .q-icon {{
+            color: var(--hc-accent) !important;
         }}
 
         .hc-sidebar-menu-button {{
