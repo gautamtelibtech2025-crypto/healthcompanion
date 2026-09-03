@@ -53,7 +53,7 @@ def apply_global_styles() -> None:
             width: 300px !important;
             height: 100vh !important;
             overflow-y: auto !important;
-            background: #efe8dc;
+            background: #F8FAFC;
             border-right: 1px solid var(--hc-border);
         }}
 
@@ -119,7 +119,7 @@ def apply_global_styles() -> None:
             background: var(--hc-card);
             border: 1px solid var(--hc-border);
             border-radius: 8px;
-            box-shadow: 0 18px 45px rgba(23, 50, 77, 0.07);
+            box-shadow: 0 18px 45px rgba(15, 23, 42, 0.07);
         }}
 
         .hc-card-flat {{
@@ -187,7 +187,7 @@ def apply_global_styles() -> None:
         .hc-sidebar-menu-button {{
             color: var(--hc-accent) !important;
             background: rgba(255, 255, 255, 0.55) !important;
-            border: 1px solid rgba(23, 50, 77, 0.08) !important;
+            border: 1px solid var(--hc-border) !important;
         }}
 
         .hc-sidebar-menu {{
@@ -198,7 +198,7 @@ def apply_global_styles() -> None:
         }}
 
         .hc-setting-card {{
-            background: linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(255, 252, 247, 0.96));
+            background: #FFFFFF;
         }}
 
         .hc-status-chip {{
