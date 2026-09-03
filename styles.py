@@ -53,6 +53,67 @@ def apply_global_styles() -> None:
             border-right: 1px solid var(--hc-border);
         }}
 
+        .hc-sidebar-nav {{
+            display: flex;
+            flex-direction: column;
+        }}
+
+        @media (max-width: 767px) {{
+            .q-drawer.q-drawer--mobile.q-drawer--left {{
+                position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
+                width: 100% !important;
+                height: auto !important;
+                max-height: none !important;
+                transform: translateX(0) !important;
+                z-index: 3000 !important;
+            }}
+
+            .q-drawer.q-drawer--mobile.q-drawer--left .q-drawer__content {{
+                height: auto !important;
+                min-height: 0 !important;
+                overflow: visible !important;
+            }}
+
+            .hc-sidebar {{
+                box-sizing: border-box;
+                padding: 12px 16px !important;
+                border-right: none;
+                border-bottom: 1px solid var(--hc-border);
+                overflow: visible !important;
+            }}
+
+            .hc-sidebar-brand,
+            .hc-sidebar-helper,
+            .hc-sidebar-spacer,
+            .hc-sidebar-divider,
+            .hc-sidebar-footer {{
+                display: none !important;
+            }}
+
+            .hc-sidebar-nav {{
+                flex-direction: row;
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                width: 100%;
+                padding-bottom: 2px;
+            }}
+
+            .hc-sidebar-nav-item {{
+                flex: 0 0 auto !important;
+                width: auto !important;
+                margin-bottom: 0 !important;
+                white-space: nowrap;
+                padding: 8px 12px !important;
+            }}
+
+            .hc-shell {{
+                margin-left: 0 !important;
+                margin-top: 72px !important;
+            }}
+        }}
+
         .hc-card {{
             background: var(--hc-card);
             border: 1px solid var(--hc-border);

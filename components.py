@@ -48,24 +48,29 @@ def sidebar(current_step: str) -> None:
     drawer = ui.left_drawer(value=True).classes("hc-sidebar w-72 p-6")
 
     with drawer:
-        with ui.column().classes("gap-1 pr-10"):
+        with ui.column().classes("hc-sidebar-brand gap-1 pr-10"):
             ui.label(APP_NAME).classes("hc-serif text-3xl")
             ui.label(APP_TAGLINE).classes("text-sm hc-muted leading-6")
-        ui.label("Gemini is loaded automatically from .env.").classes("text-xs hc-muted leading-5 mt-6 mb-5")
-        for step, route in steps:
-            active = step == current_step
-            with ui.button(
-                step,
-                on_click=lambda target=route: ui.navigate.to(target),
-                icon="radio_button_checked" if active else "radio_button_unchecked",
-            ).classes(
-                "w-full justify-start text-left px-4 py-3 mb-2 rounded-xl border-none shadow-none "
-                + ("hc-nav-active" if active else "hc-nav-item")
-            ):
-                pass
-        ui.space()
-        ui.separator().classes("my-5")
-        ui.label("No API key is exposed in the interface.").classes("text-xs hc-muted leading-5")
+        ui.label("Gemini is loaded automatically from .env.").classes(
+            "hc-sidebar-helper text-xs hc-muted leading-5 mt-6 mb-5"
+        )
+        with ui.row().classes("hc-sidebar-nav gap-2"):
+            for step, route in steps:
+                active = step == current_step
+                with ui.button(
+                    step,
+                    on_click=lambda target=route: ui.navigate.to(target),
+                    icon="radio_button_checked" if active else "radio_button_unchecked",
+                ).classes(
+                    "hc-sidebar-nav-item w-full justify-start text-left px-4 py-3 mb-2 rounded-xl border-none shadow-none "
+                    + ("hc-nav-active" if active else "hc-nav-item")
+                ):
+                    pass
+        ui.space().classes("hc-sidebar-spacer")
+        ui.separator().classes("hc-sidebar-divider my-5")
+        ui.label("No API key is exposed in the interface.").classes(
+            "hc-sidebar-footer text-xs hc-muted leading-5"
+        )
 
 
 def metric(label: str, value: str, caption: str = "") -> None:
